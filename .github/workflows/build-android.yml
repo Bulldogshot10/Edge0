@@ -28,12 +28,13 @@ jobs:
             android/gradle/libs.versions.toml
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
 
       - name: Install Android SDK tools
         run: |
           sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
-          yes | sdkmanager --licenses >/dev/null || true
 
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
