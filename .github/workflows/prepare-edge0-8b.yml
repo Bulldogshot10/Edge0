@@ -37,6 +37,14 @@ jobs:
             --local-dir models/edge0-8b
           du -sh models/edge0-8b
 
+      - name: Ensure upstream repack helper is present
+        run: |
+          curl -fL --retry 3 \
+            https://raw.githubusercontent.com/Edge0-AI/Edge0/main/windows/tools/repack_mlx_to_gguf.py \
+            -o windows/tools/repack_mlx_to_gguf.py
+          python -m py_compile windows/tools/repack_mlx_to_gguf.py windows/tools/repack_r3_8b.py
+          ls -lh windows/tools/repack_mlx_to_gguf.py windows/tools/repack_r3_8b.py
+
       - name: Convert MLX checkpoint to Android GGUF
         run: |
           set +e
