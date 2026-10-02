@@ -25,7 +25,7 @@ jobs:
       - name: Install conversion dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy huggingface_hub gguf
+          python -m pip install numpy huggingface_hub
 
       - name: Check disk space
         run: df -h
@@ -39,9 +39,18 @@ jobs:
 
       - name: Convert MLX checkpoint to Android GGUF
         run: |
+          set +e
           python windows/tools/convert_mlx_to_gguf.py \
             --dir models/edge0-8b \
             --out models/edge0-8b-gguf
+          rc=$?
+          echo "converter exit code: $rc"
+          if [ -f models/edge0-8b-gguf/convert.log ]; then
+            echo "===== convert.log ====="
+            cat models/edge0-8b-gguf/convert.log
+            echo "===== end convert.log ====="
+          fi
+          exit $rc
 
       - name: Verify generated artifacts
         run: |
@@ -65,3 +74,13 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
+
+      - name: Upload conversion debug log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Edge0-8B-conversion-debug
+          path: models/edge0-8b-gguf/convert.log
+          if-no-files-found: warn
+          retention-days: 3
+          compression-level: 9
