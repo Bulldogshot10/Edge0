@@ -23,10 +23,9 @@ jobs:
           java-version: "17"
           cache: gradle
           cache-dependency-path: |
-            android/*.gradle*
             android/**/*.gradle*
-            android/gradle/**/*.*
-            android/gradle.properties
+            android/gradle/wrapper/gradle-wrapper.properties
+            android/gradle/libs.versions.toml
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -48,9 +47,9 @@ jobs:
         working-directory: android
         env:
           EDGE0_DEPOT: ${{ github.workspace }}
-          ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.2.13676358
-          NDK_DIR: ${{ env.ANDROID_HOME }}/ndk/28.2.13676358
         run: |
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
+          export NDK_DIR="$ANDROID_NDK_HOME"
           chmod +x tools/llama/build_vendor_libs.sh
           ./tools/llama/build_vendor_libs.sh
 
